@@ -95,20 +95,43 @@ class RaftNode:
         elif message['type'] == "VoteResponse":  # 투표 응답 처리
             self.handle_vote_response(message)
 
+
+
+
+
+    #### TODO: 각 state에 따라 메시지 처리 함수 구현 ####
+    #### TODO: threading.Timer 를 사용하여 선거 타임아웃 구현 고치기 ####
+
+
     # RequestVote 메시지를 처리 (투표 요청)
     def handle_request_vote(self, message, addr):
         my_last_log_index = len(self.log) - 1
         my_last_log_term = self.log[-1][0] if self.log else 0
         
         # 투표 요청 수락할 때
-        if message['term'] > self.term or (message['term'] == self.term and (message['last_log_term'] > my_last_log_term or message['last_log_index'] >= my_last_log_index)):
-            self.become_follower(message['term'])
-            self.voted_for = message['candidate_id']
-            response = {"term": self.term, "vote_granted": True}
-        # 투표 요청 거절할 때
-        else:
-            response = {"term": self.term, "vote_granted": False}
-        self.send_message(addr, response)
+        
+        #follower인 경우
+        if self.state == "follower":
+            
+            if message['term'] > self.term:
+                self.become_follower(message['term'])
+                self.voted_for = message['candidate_id']
+                response = {"term": self.term, "vote_granted": True}
+            
+            elif 
+            
+            else:
+                response = {"term": self.term, "vote_granted": False}
+            self.send_message(addr, response)
+        
+        
+            
+        
+
+
+
+
+
 
     # AppendEntries 메시지를 처리 (하트비트 또는 로그 복제)
     def handle_append_entries(self, message):
